@@ -58,6 +58,19 @@ test('el público no puede insertar reservas directo en la tabla', opciones, asy
   assert.notEqual(error, null);
 });
 
+test('el público no puede llamar las funciones internas ni las del panel', opciones, async () => {
+  const id = '00000000-0000-4000-8000-000000000000';
+  const llamadas = [
+    anon.rpc('encolar_avisos', { p_reserva: id }),
+    anon.rpc('cambiar_estado_reserva', { p_reserva: id, p_estado: 'cancelada' }),
+    anon.rpc('reprogramar_reserva', { p_reserva: id, p_inicio: new Date().toISOString(), p_profesional: id }),
+    anon.rpc('guardar_horarios', { p_profesional: id, p_franjas: [] }),
+    anon.rpc('restaurar_demo'),
+    anon.rpc('tomar_mensajes', { p_limite: 1 }),
+  ];
+  for (const r of await Promise.all(llamadas)) assert.equal(r.error?.code, '42501', 'permiso denegado');
+});
+
 test('agenda_ocupada no expone datos personales', opciones, async () => {
   const { data, error } = await anon.rpc('agenda_ocupada', { p_slug: SLUG, p_desde: new Date().toISOString(), p_hasta: new Date(Date.now() + 7 * 864e5).toISOString() });
   assert.equal(error, null);
