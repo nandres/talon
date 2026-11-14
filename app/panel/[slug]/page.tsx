@@ -16,7 +16,7 @@ export default async function PaginaAgenda({ params, searchParams }: { params: P
   if (!sesion || !m) notFound();
   const db = sesion.db;
 
-  const { data: negocio } = await db.from('negocios').select('id, zona_horaria, intervalo_min').eq('id', m.negocio_id).single();
+  const { data: negocio } = await db.from('negocios').select('id, zona_horaria, intervalo_min, demo').eq('id', m.negocio_id).single();
   if (!negocio) notFound();
   const zona = negocio.zona_horaria as string;
   const hoy = partesLocales(new Date(), zona).fecha;
@@ -60,6 +60,7 @@ export default async function PaginaAgenda({ params, searchParams }: { params: P
     <Agenda
       key={`${fecha}-${vista}`}
       slug={slug}
+      demo={negocio.demo as boolean}
       zona={zona}
       hoy={hoy}
       fecha={fecha}

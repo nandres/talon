@@ -14,6 +14,8 @@ export type Negocio = {
   foto: string | null;
   tema: 'noche' | 'dia';
   lema: string | null;
+  /** Negocio de ejemplo: sus teléfonos son ficticios y la interfaz no enlaza a WhatsApp. */
+  demo: boolean;
 };
 
 export type Servicio = { id: string; nombre: string; descripcion: string | null; duracion_min: number; precio_gs: number };

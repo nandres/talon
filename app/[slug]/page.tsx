@@ -6,6 +6,7 @@ import { clientePublico } from '@/lib/supabase/publico';
 import type { Negocio, Oferta, Profesional, Servicio } from '@/lib/tipos';
 import Escaparate from '../Escaparate';
 import { Aparecer, Pintar } from '../animaciones';
+import BotonWhatsApp from './BotonWhatsApp';
 import Reserva from './Reserva';
 
 export const dynamic = 'force-dynamic';
@@ -41,11 +42,7 @@ export default async function PaginaNegocio({ params }: { params: Promise<{ slug
     <Escaparate foto={negocio.foto} tema={negocio.tema}>
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 pt-5 sm:px-8">
         <Link href="/" className="etq vd-sombra hover:text-[color:var(--texto)]">← Talón</Link>
-        {negocio.telefono && (
-          <a href={`https://wa.me/${negocio.telefono.replace(/\D/g, '')}`} className="vidrio rounded-full px-4 py-2 text-[.85rem] font-medium" style={{ borderRadius: 999 }}>
-            Escribir por WhatsApp
-          </a>
-        )}
+        {negocio.telefono && <BotonWhatsApp telefono={negocio.telefono} demo={negocio.demo} />}
       </nav>
 
       <header className="mx-auto max-w-5xl px-4 pb-10 pt-[12vh] sm:px-8">

@@ -71,6 +71,16 @@ test('el público no puede llamar las funciones internas ni las del panel', opci
   for (const r of await Promise.all(llamadas)) assert.equal(r.error?.code, '42501', 'permiso denegado');
 });
 
+test('los negocios de ejemplo están marcados como demo y su teléfono no es de nadie', opciones, async () => {
+  const { data, error } = await anon.from('negocios').select('slug, telefono, demo').in('slug', [SLUG, 'kine-mburucuya']);
+  assert.equal(error, null);
+  assert.equal(data!.length, 2);
+  for (const n of data!) {
+    assert.equal(n.demo, true, n.slug);
+    assert.match(n.telefono, /^0000/, `${n.slug}: el prefijo 0000 no existe, así que no es el número de nadie`);
+  }
+});
+
 test('agenda_ocupada no expone datos personales', opciones, async () => {
   const { data, error } = await anon.rpc('agenda_ocupada', { p_slug: SLUG, p_desde: new Date().toISOString(), p_hasta: new Date(Date.now() + 7 * 864e5).toISOString() });
   assert.equal(error, null);

@@ -13,6 +13,8 @@ import { SUAVE } from '../../animaciones';
 
 type Props = {
   slug: string;
+  /** Negocio de ejemplo: los teléfonos son ficticios y no se enlazan a WhatsApp. */
+  demo: boolean;
   zona: string;
   hoy: string;
   fecha: string;
@@ -42,7 +44,7 @@ export default function Agenda(p: Props) {
         ? <VistaDia {...p} reservas={visibles} nombres={nombres} filtro={filtro} onAbrir={setAbierta} />
         : <VistaSemana {...p} reservas={visibles} nombres={nombres} onAbrir={setAbierta} />}
       <AnimatePresence>
-        {reserva && <Ficha key={reserva.id} slug={p.slug} zona={p.zona} reserva={reserva} nombres={nombres} ofertas={p.ofertas} onCerrar={() => setAbierta(null)} />}
+        {reserva && <Ficha key={reserva.id} slug={p.slug} demo={p.demo} zona={p.zona} reserva={reserva} nombres={nombres} ofertas={p.ofertas} onCerrar={() => setAbierta(null)} />}
       </AnimatePresence>
     </div>
   );
@@ -248,8 +250,8 @@ function Vacio({ children }: { children: React.ReactNode }) {
 
 // ── Ficha de un turno: datos del cliente y lo que se puede hacer ─────────────
 
-function Ficha({ slug, zona, reserva: r, nombres, ofertas, onCerrar }: {
-  slug: string; zona: string; reserva: ReservaPanel; nombres: Record<string, string>; ofertas: Props['ofertas']; onCerrar: () => void;
+function Ficha({ slug, demo, zona, reserva: r, nombres, ofertas, onCerrar }: {
+  slug: string; demo: boolean; zona: string; reserva: ReservaPanel; nombres: Record<string, string>; ofertas: Props['ofertas']; onCerrar: () => void;
 }) {
   const router = useRouter();
   const quieto = useReducedMotion();
@@ -294,7 +296,7 @@ function Ficha({ slug, zona, reserva: r, nombres, ofertas, onCerrar }: {
           <dt className="text-[color:var(--texto-2)]">Con</dt><dd>{nombres[r.profesionalId]}</dd>
           <dt className="text-[color:var(--texto-2)]">Cuándo</dt><dd className="first-letter:uppercase">{fechaLarga(r.inicio, zona)}, {hora(r.inicio, zona)} a {hora(r.fin, zona)}</dd>
           <dt className="text-[color:var(--texto-2)]">Teléfono</dt>
-          <dd><a className="underline decoration-1 underline-offset-4" href={`https://wa.me/${r.telefono.replace(/\D/g, '').replace(/^0/, '595')}`} target="_blank" rel="noreferrer">{r.telefono}</a></dd>
+          <dd>{demo ? <span className="tabular-nums">{r.telefono}</span> : <a className="underline decoration-1 underline-offset-4" href={`https://wa.me/${r.telefono.replace(/\D/g, '').replace(/^0/, '595')}`} target="_blank" rel="noreferrer">{r.telefono}</a>}</dd>
           {r.correo && <><dt className="text-[color:var(--texto-2)]">Correo</dt><dd className="break-all">{r.correo}</dd></>}
           <dt className="text-[color:var(--texto-2)]">Precio</dt><dd className="tabular-nums">{guaranies(r.precioGs)}{r.senaGs > 0 ? ` · seña ${guaranies(r.senaGs)}` : ''}</dd>
           {r.senaGs > 0 && (
