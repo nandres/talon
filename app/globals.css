@@ -1,0 +1,220 @@
+@import 'tailwindcss';
+
+/* Talón — La vidriera.
+   Cada negocio se ve a través de su vidrio: la foto del local atrás, paneles esmerilados
+   adelante, el rótulo pintado en el vidrio y la luz de la calle que lo recorre.
+   Minimalista: poco relleno, mucho aire, una sola tipografía de interfaz. */
+
+@theme {
+  --font-rotulo: var(--f-rotulo), Georgia, serif;
+  --font-ui: var(--f-ui), system-ui, sans-serif;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: #1c120c;
+  color: #fbf5ec;
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+
+  /* ── Temas ───────────────────────────────────────────────────────────── */
+
+  .vd {
+    --foto: none;
+    --tinte: 28 18 12;            /* rgb del velo sobre la foto */
+    --vidrio: 255 248 238;        /* rgb del vidrio */
+    --vidrio-a: .1;
+    --borde-a: .22;
+    --texto: #fbf5ec;
+    --texto-2: rgb(251 245 236 / .7);
+    --acento: #e7b55c;
+    --acento-tinta: #2a1a0b;
+    --aviso: #ffb4a2;
+    --panel-oscuro: rgb(0 0 0 / .24);
+    --campo: rgb(255 255 255 / .1);
+    --campo-borde: rgb(255 255 255 / .22);
+    --linea: rgb(255 255 255 / .24);        /* bordes finos de botones y chips */
+    --linea-suave: rgb(255 255 255 / .09);
+    --oro: linear-gradient(176deg, #fff1c9 0%, #f3cf7d 28%, #b7822f 52%, #f6d98f 70%, #a8742a 100%);
+    min-height: 100dvh;
+    color: var(--texto);
+    color-scheme: dark;   /* calendarios, selects y relojes nativos en oscuro */
+    position: relative;
+    isolation: isolate;
+    overflow-x: clip;
+  }
+
+  .vd[data-tema='dia'] {
+    --tinte: 236 240 236;
+    --vidrio: 255 255 255;
+    --vidrio-a: .42;
+    --borde-a: .75;
+    --texto: #142420;
+    --texto-2: rgb(20 36 32 / .7);
+    --acento: #2f6f5e;
+    --acento-tinta: #f4faf7;
+    --aviso: #9b2c1c;
+    --panel-oscuro: rgb(255 255 255 / .5);
+    --campo: rgb(255 255 255 / .55);
+    --campo-borde: rgb(20 36 32 / .16);
+    --linea: rgb(20 36 32 / .2);
+    --linea-suave: rgb(20 36 32 / .08);
+    color-scheme: light;
+  }
+
+  /* La foto del local, fija, con un acercamiento muy lento */
+  .vd-foto {
+    position: fixed; inset: -4%;
+    z-index: -2;
+    background: var(--foto) center / cover no-repeat, rgb(var(--tinte));
+    animation: respirar 38s ease-in-out infinite alternate;
+  }
+  .vd-velo {
+    position: fixed; inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(90deg, rgb(var(--tinte) / .55) 0%, rgb(var(--tinte) / 0) 60%),
+      linear-gradient(180deg, rgb(var(--tinte) / .25) 0%, rgb(var(--tinte) / .55) 45%, rgb(var(--tinte) / .85) 100%);
+  }
+  .vd-sombra { text-shadow: 0 1px 12px rgb(var(--tinte) / .9); }
+
+  /* Panel: la misma vidriera vista desde adentro. Más velo y vidrio más denso, porque hay datos que leer. */
+  .vd[data-panel] { --vidrio-a: .14; }
+  .vd[data-panel][data-tema='dia'] { --vidrio-a: .6; }
+  .vd[data-panel] .vd-velo {
+    background: linear-gradient(180deg, rgb(var(--tinte) / .7) 0%, rgb(var(--tinte) / .86) 40%, rgb(var(--tinte) / .92) 100%);
+  }
+  .vd[data-panel] .vd-foto { filter: blur(6px) saturate(1.1); animation: none; }
+
+  /* ── El vidrio ───────────────────────────────────────────────────────── */
+
+  .vidrio {
+    position: relative;
+    background: rgb(var(--vidrio) / var(--vidrio-a));
+    -webkit-backdrop-filter: blur(22px) saturate(1.5);
+            backdrop-filter: blur(22px) saturate(1.5);
+    border-radius: 22px;
+    /* canto de la lámina: luz arriba, sombra abajo */
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / calc(var(--borde-a) + .1)),
+      inset 0 0 0 1px rgb(255 255 255 / var(--borde-a)),
+      inset 0 -1px 0 rgb(0 0 0 / .12),
+      0 30px 60px -30px rgb(0 0 0 / .45);
+    overflow: hidden;
+  }
+  .vidrio-oscuro { background: var(--panel-oscuro); }
+
+  /* El reflejo de la calle: una franja de luz que cruza el vidrio cada tanto */
+  .vidrio::after {
+    content: '';
+    position: absolute;
+    inset: -40% -60%;
+    background: linear-gradient(105deg, transparent 42%, rgb(255 255 255 / .16) 47%, rgb(255 255 255 / .04) 50%, transparent 56%);
+    translate: -70% 0;
+    animation: reflejo 9s cubic-bezier(.45, 0, .2, 1) infinite;
+    animation-delay: var(--retraso, 0s);
+    pointer-events: none;
+  }
+
+  /* ── El rótulo pintado en el vidrio ──────────────────────────────────── */
+
+  .rotulo {
+    font-family: var(--font-rotulo);
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: -.015em;
+    line-height: .9;
+    /* pan de oro: metal con un brillo que se desplaza */
+    background: var(--oro);
+    background-size: 100% 220%;
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 1px 0 rgb(60 30 0 / .55)) drop-shadow(0 0 18px rgb(240 190 90 / .18));
+    animation: oro 7s ease-in-out infinite alternate;
+  }
+  /* De día el rótulo va grabado: tinta plana con el canto inferior que agarra la luz */
+  .vd[data-tema='dia'] .rotulo {
+    background: none;
+    color: #23574a;
+    filter: drop-shadow(0 1.5px 0 rgb(255 255 255 / .9)) drop-shadow(0 -1px 0 rgb(0 0 0 / .12));
+    animation: none;
+  }
+
+  .filete { height: 1px; background: linear-gradient(90deg, transparent, var(--acento), transparent); opacity: .7; }
+
+  .etq {
+    font-size: .75rem;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--texto-2);
+  }
+
+  .campo {
+    width: 100%;
+    border-radius: 14px;
+    background: var(--campo);
+    box-shadow: inset 0 0 0 1px var(--campo-borde);
+    padding: .8rem 1rem;
+    font-size: 1rem;
+    color: inherit;
+    outline: none;
+    transition: box-shadow .2s;
+  }
+  .campo::placeholder { color: var(--texto-2); }
+  .campo:focus { box-shadow: inset 0 0 0 1.5px var(--acento); }
+
+  .vd :focus-visible { outline: 2px solid var(--acento); outline-offset: 3px; }
+
+  /* ── El número escrito con el dedo en el vidrio empañado ─────────────── */
+
+  .vaho {
+    background: rgb(var(--vidrio) / calc(var(--vidrio-a) + .14));
+    -webkit-backdrop-filter: blur(34px) saturate(1.2) brightness(1.08);
+            backdrop-filter: blur(34px) saturate(1.2) brightness(1.08);
+  }
+  /* Donde pasó el dedo el vidrio queda limpio: se ve la foto nítida a través del número */
+  .limpio {
+    background: var(--foto) center / cover no-repeat fixed;
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1px rgb(255 255 255 / .4);
+    font-family: var(--font-rotulo);
+    font-weight: 700;
+    font-style: italic;
+  }
+  /* De día la foto es clara: el borde del trazo lleva la tinta para que el número se lea */
+  .vd[data-tema='dia'] .limpio {
+    -webkit-text-stroke: 1.5px rgb(35 87 74 / .65);
+    filter: contrast(1.2) saturate(1.25) brightness(.92);
+  }
+  .gota {
+    position: absolute;
+    width: 5px; height: 7px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background: radial-gradient(circle at 35% 30%, rgb(255 255 255 / .9), rgb(255 255 255 / .15) 60%, transparent 70%);
+    box-shadow: 0 1px 1px rgb(0 0 0 / .15);
+    animation: escurrir var(--t, 6s) linear var(--d, 0s) infinite;
+    pointer-events: none;
+  }
+}
+
+@keyframes respirar { from { scale: 1; translate: 0 0; } to { scale: 1.07; translate: -1.2% -1%; } }
+@keyframes reflejo { 0%, 62% { translate: -70% 0; } 100% { translate: 70% 0; } }
+@keyframes oro { from { background-position: 0 0; } to { background-position: 0 100%; } }
+@keyframes escurrir { 0% { translate: 0 0; opacity: 0; } 10% { opacity: 1; } 100% { translate: 0 160px; opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-foto, .vidrio::after, .rotulo, .gota { animation: none; }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vidrio, .vaho { background: rgb(var(--tinte) / .88); }
+}

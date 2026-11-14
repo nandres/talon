@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    env:
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+
+      # Las pruebas de la base corren contra un Supabase de verdad: migraciones, RLS y datos de ejemplo.
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Levantar Supabase local
+        run: supabase start -x realtime,storage-api,imgproxy,edge-runtime,logflare,vector,supavisor,studio,mailpit
+      - name: Pasar las claves locales al entorno
+        run: |
+          supabase status -o env | tr -d '"' | sed -n 's/^PUBLISHABLE_KEY=/NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=/p; s/^SECRET_KEY=/SUPABASE_SECRET_KEY=/p' >> "$GITHUB_ENV"
+          echo "NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54421" >> "$GITHUB_ENV"
+
+      - run: npm test
+      - run: npm run build
