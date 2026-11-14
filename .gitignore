@@ -8,3 +8,6 @@ outputs/
 *.tsbuildinfo
 .claude/
 .next-prod/
+
+.vercel
+.env*

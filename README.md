@@ -4,6 +4,8 @@
 
 Turnos en línea para negocios de barrio. Cada negocio tiene su vidriera: el cliente elige servicio, profesional y horario, paga la seña si hace falta y se lleva su número. Detrás del mostrador, el equipo ve la agenda del día, mueve turnos y sigue los avisos que salen por WhatsApp.
 
+**En línea:** https://talon-turnos.vercel.app · panel en [/panel/entrar](https://talon-turnos.vercel.app/panel/entrar), con cuentas de demostración
+
 ![Página de reserva de la barbería](docs/reserva.webp)
 
 > **Software propietario.** Ver [LICENSE](LICENSE). Los negocios, las personas y las fotos de la demo son ficticios; las fotos fueron generadas con IA.
@@ -62,7 +64,7 @@ Para entrar al panel, `/panel/entrar` tiene botones con las cuentas de la demo.
 
 ```bash
 npm run typecheck
-npm test        # 33 pruebas: disponibilidad, RLS, concurrencia, panel, pagos y cola
+npm test        # 34 pruebas: disponibilidad, RLS, concurrencia, panel, pagos y cola
 npm run build
 ```
 
