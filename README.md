@@ -64,7 +64,7 @@ Para entrar al panel, `/panel/entrar` tiene botones con las cuentas de la demo.
 
 ```bash
 npm run typecheck
-npm test        # 34 pruebas: disponibilidad, RLS, concurrencia, panel, pagos y cola
+npm test        # 35 pruebas: disponibilidad, RLS, concurrencia, panel, pagos y cola
 npm run build
 ```
 
