@@ -12,7 +12,8 @@
     "start": "next start --hostname 127.0.0.1 --port 3210",
     "typecheck": "tsc --noEmit",
     "test": "node --env-file-if-exists=.env.local --test \"tests/**/*.test.ts\"",
-    "db:reset": "supabase db reset"
+    "db:reset": "supabase db reset",
+    "capturas": "node --env-file-if-exists=.env.local scripts/capturas.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -28,6 +29,7 @@
     "@types/node": "^24.19.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "sharp": "^0.35.5",
     "tailwindcss": "4.2.1",
     "typescript": "5.9.3"
   }

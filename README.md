@@ -68,4 +68,10 @@ npm test        # 35 pruebas: disponibilidad, RLS, concurrencia, panel, pagos y 
 npm run build
 ```
 
+Las capturas de `docs/` salen de la versión compilada (`npm run build && npm start`), con Chrome sin ventana:
+
+```bash
+npm run capturas -- --restaurar-demo   # rehace la demo local y guarda las 10 capturas en docs/
+```
+
 Hecho por **Marcos Arellano** · [marcos-arellano.vercel.app](https://marcos-arellano.vercel.app)
